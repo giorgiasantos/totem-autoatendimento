@@ -12,7 +12,6 @@ public class TotemView {
     }
 
     public void menuLanches(){
-        System.out.println("----------------------------");
         System.out.println("-----MENU DE LANCHES-----");
         System.out.println("DIGITE A OPÇÃO DESEJADA:");
         System.out.println("1 ) X-BURGER = R$ 10.00");
@@ -22,7 +21,6 @@ public class TotemView {
     }
 
     public void menuBebidas(){
-        System.out.println("----------------------------");
         System.out.println("-----MENU DE BEBIDAS-----");
         System.out.println("DIGITE A OPÇÃO DESEJADA:");
         System.out.println("1 ) REFRIGERANTE = R$ 8.00");
@@ -32,7 +30,6 @@ public class TotemView {
     }
 
     public void formasPagamento(){
-        System.out.println("----------------------------");
         System.out.println("-----FORMAS DE PAGAMENTO-----");
         System.out.println("DIGITE A OPÇÃO DESEJADA:");
         System.out.println("1) CRÉDITO");

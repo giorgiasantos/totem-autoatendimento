@@ -4,12 +4,14 @@ import model.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
 
 import static conexao.Conexao.getConnection;
 public class CarrinhoController {
 
     //ATRIBUTOS
     private Statement statement;
+    private double valorTotal;
 
     // CONSTRUCTOR
     public CarrinhoController() {
@@ -38,7 +40,7 @@ public class CarrinhoController {
     public double calcularValorTotal(int idPedido) {
 
         String sql = "select tipo_item, referencia_item, quantidade from tb_pedidos where  id_pedido ='" + idPedido + "'";
-        double valorTotal = 0.0;
+        //double valorTotal = 0.0;
         LanchesModel lanchesModel = new LanchesModel();
         BebidasModel bebidasModel = new BebidasModel();
 
@@ -50,13 +52,13 @@ public class CarrinhoController {
                     double valorItem = lanchesModel.buscarValorLanche(resultSet.getInt("referencia_item"));
                     int quantidade = resultSet.getInt("quantidade");
                     valorTotal = valorItem * quantidade;
-                    System.out.println("O VALOR TOTAL É R$ " + valorTotal);
+                    //System.out.println("O VALOR TOTAL É R$ " + valorTotal);
 
                 } else if (resultSet.getInt("tipo_item") == 2) {
                     double valorItem = bebidasModel.buscarValorBebida(resultSet.getInt("referencia_item"));
                     int quantidade = resultSet.getInt("quantidade");
                     valorTotal = valorItem * quantidade;
-                    System.out.println("O VALOR TOTAL É R$ " + valorTotal);
+                    //System.out.println("O VALOR TOTAL É R$ " + valorTotal);
                 }
 
                 // atualizando o tempo de permanência na tabela
@@ -81,6 +83,7 @@ public class CarrinhoController {
 
         try {
             ResultSet resultSet = statement.executeQuery(sql);
+            System.out.println("-------------CARRINHO DE COMPRAS---------------");
             while (resultSet.next()) {
                 int tipoItem = resultSet.getInt("tipo_item");
                 int refItemID = resultSet.getInt("referencia_item");
@@ -94,7 +97,6 @@ public class CarrinhoController {
                     tipoPedido = "Bebida";
                     refItem = bebidasModel.buscarNomeBebida(refItemID);
                 }
-
                 System.out.println("ID DO PEDIDO: " + idPedido + " | TIPO DO ITEM: " + tipoPedido + " | REFERÊNCIA DO ITEM: " + refItem + " | QUANTIDADE: " + quantidade + " | VALOR TOTAL R$" + valorTotal);
             }
         } catch (SQLException e) {
@@ -130,6 +132,8 @@ public class CarrinhoController {
     // selecionar forma de pagamento
     public void selecionarFormaPagamento(int idPedido, int formaPagamento) {
         String sql = "select forma_pagamento from tb_pedidos where  id_pedido ='" + idPedido + "'";
+        Scanner entrada = new Scanner(System.in);
+
         CarteiraModel carteiraModel = new CarteiraModel();
         try {
             ResultSet resultSet = statement.executeQuery(sql);
@@ -139,11 +143,14 @@ public class CarrinhoController {
                     System.out.println("VOCÊ SELECIONOU " + carteiraModel.buscarTipoPagamento(formaPagamento));
                     System.out.println("PROCESSANDO PAGAMENTO....");
                     System.out.println("PAGAMENTO APROVADO!");
+                    System.out.println("BOA REFEIÇÃO!");
 
                 } else if (formaPagamento == 4) {
                     System.out.println("VOCÊ SELECIONOU " + carteiraModel.buscarTipoPagamento(formaPagamento));
-                    System.out.println("AGUARDE SEU TROCO.");
-                    System.out.println("OBRIGADO!");
+                    System.out.println("DIGITE O VALOR A PAGAR: ");
+                    double valorRecebido = entrada.nextDouble();
+                    calcularTroco(idPedido,valorRecebido);
+                    System.out.println("BOA REFEIÇÃO!");
 
                 }
 
@@ -157,6 +164,12 @@ public class CarrinhoController {
             e.printStackTrace();
         }
 
+    }
+    public double calcularTroco(int idPedido, double valorRecebido){
+
+        double troco = valorRecebido - valorTotal;
+        System.out.println("VALOR DE TROCO = R$" + troco);
+        return troco;
     }
 }
 
